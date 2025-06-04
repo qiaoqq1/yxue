@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高等学籍</title>
+    <style>
+        /* 重置根字体大小为16px */
+        html {
+            font-size: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 0.9375em; /* 15px / 16px = 0.9375em */
+            color: #333;
+            max-width: 37.5em; /* 600px / 16px = 37.5em */
+            margin: 0 auto;
+            max-height: 100vh; /* 设置最大高度为视口高度 */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card {
+            background: linear-gradient(to top, #3ec992 0%, #22b281 100%);
+            border-radius: 0.5em; /* 20px / 16px = 1.25em */
+            overflow: hidden;
+            box-shadow: 0 0.125em 0.9375em rgba(0, 0, 0, 0.1); /* 2px和15px转换 */
+            margin-bottom: 0.5em; /* 20px / 16px = 1.25em */
+            flex-shrink: 0; /* 防止元素被压缩 */
+        }
+
+        .header {
+            display: flex;
+            padding: 1.5625em; /* 25px / 16px = 1.5625em */
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .avatars {
+            display: flex;
+            align-items: center;
+            margin-right: 0.625em; /* 10px / 16px = 0.625em */
+            width: 9.375em; /* 150px / 16px = 9.375em */
+        }
+
+        .avatar-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 0.75em; /* 12px / 16px = 0.75em */
+        }
+
+        .avatar {
+            width: 3em; /* 60px / 16px = 3.75em */
+            height: 4.25em; /* 80px / 16px = 5em */
+            border-radius: 0.5em; /* 8px / 16px = 0.5em */
+            background-color: #fff;
+            border: 0.0625em solid #fff; /* 1px / 16px = 0.0625em */
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0.125em 0.3125em rgba(0, 0, 0, 0.1); /* 2px和5px转换 */
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-label {
+            margin-top: 0.5em; /* 8px / 16px = 0.5em */
+            font-size: 0.58em; /* 11px / 16px = 0.6875em */
+            text-align: center;
+            color: white;
+        }
+
+        .info {
+            flex: 1;
+            color: white;
+            text-align: left;
+            margin-top: -1.5em; /* -35px / 16px = -2.1875em */
+        }
+
+        .name {
+            font-size: 1em; /* 18px / 16px = 1.125em */
+            margin-bottom: 0.3em; /* 8px / 16px = 0.5em */
+            margin-left: -2.3em; /* 往左拉一点点 */
+        }
+
+        .birthday {
+            font-size: 0.78em; /* 14px / 16px = 0.875em */
+            margin-left: -2.9em; /* 往左拉一点点 */
+        }
+
+        .school-info {
+            padding: 1.25em 1.5625em 1.25em; /* 20px和25px转换 */
+            color: white;
+            margin-top: -1.5em; /* -17px / 16px = -1.0625em */
+        }
+
+        .school-name-container {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .school-name {
+            font-size: 1.2em; /* 24px / 16px = 1.5em */
+        }
+
+        .education-level {
+            background-color: rgb(27,164,112);
+            border-radius: 1.125em; /* 18px / 16px = 1.125em */
+            padding: 0.5125em 0.7375em; /* 5px和15px转换 */
+            font-size: 0.75em; /* 16px / 16px = 1em */
+            height: 1.8em; /* 30px / 16px = 1.875em */
+            display: flex;
+            align-items: center;
+            box-shadow: 0 0.125em 0.3125em rgba(0, 0, 0, 0.1);
+            transform: translateY(0.18em); /* 下移10像素，可以根据需要调整 */
+        }
+
+        .major-info {
+            font-size: 0.85em; /* 17px / 16px = 1.0625em */
+            text-align: left;
+            margin-top: 0.75em; /* 15px / 16px = 0.9375em */
+        }
+
+        .details {
+            background-color: transparent; /* 将背景颜色设置为透明 */
+            padding: 0.8em 1.25em; /* 15px和20px转换 */
+            border-radius: 0.625em; /* 20px / 16px = 1.25em */
+            flex-shrink: 0; /* 防止元素被压缩 */
+            overflow-y: auto; /* 允许详情部分滚动 */
+            max-height: 70vh; /* 设置详情部分的最大高度 */
+        }
+
+        .detail-item {
+            display: flex;
+            padding: 0.75em 0; /* 12px / 16px = 0.75em */
+            justify-content: center;
+            border-bottom: none; /* 移除边框 */
+        }
+
+        .detail-label {
+            width: 43%;
+            color: rgb(149, 149, 149); /* 设置颜色为 rgb(149, 149, 149) */
+            text-align: right;
+            font-size: 0.875em; /* 14px / 16px = 0.875em */
+            padding-right: 1.375em; /* 调整间距为两个字符的宽度（20px/16px=1.25em） */
+            line-height: 0.7;
+        }
+
+        .detail-value {
+            width: 57%;
+            color: #222; /* 颜色稍微深一点 */
+            text-align: left;
+            font-size: 0.875em; /* 14px / 16px = 0.875em */
+            line-height: 0.7;
+        }
+
+        /* 底部按钮 */
+        .footer {
+            margin-top: 0;
+            flex-shrink: 0; /* 防止元素被压缩 */
+        }
+
+        .btn {
+            background-color: #2aba91;
+            color: white;
+            border: none;
+            padding: 0.8em; /* 18px / 16px = 1.125em */
+            border-radius: 0.1em; /* 10px / 16px = 0.625em */
+            font-size: 1em; /* 16px / 16px = 1em */
+            cursor: pointer;
+            width: 100%;
+            margin-top: 0.4em; /* 20px / 16px = 1.25em */
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #2ecc71;
+        }
+
+        @media (max-width: 360px) {
+            html {
+                font-size: 14px; /* 在小屏幕设备上减少根字体大小 */
+            }
+
+            .avatar {
+                width: 4.2857em; /* 60px / 14px ≈ 4.2857em */
+                height: 4.2857em; /* 60px / 14px ≈ 4.2857em */
+            }
+
+            .name {
+                font-size: 1.4286em; /* 20px / 14px ≈ 1.4286em */
+            }
+
+            .birthday {
+                font-size: 1em; /* 14px / 14px = 1em */
+            }
+
+            .school-name {
+                font-size: 1.5714em; /* 22px / 14px ≈ 1.5714em */
+            }
+
+            .detail-label, .detail-value {
+                font-size: 0.9286em; /* 13px / 14px ≈ 0.9286em */
+            }
+        }
+
+        @media (max-width: 320px) {
+            html {
+                font-size: 12px; /* 在更小屏幕设备上进一步减少根字体大小 */
+            }
+
+            .header {
+                padding: 1.25em 0.9375em; /* 20px和15px转换 */
+            }
+
+            .school-info {
+                padding: 0.9375em; /* 15px转换 */
+            }
+
+            .school-name {
+                font-size: 1.6667em; /* 20px / 12px ≈ 1.6667em */
+            }
+
+            .detail-item {
+                padding: 0.8333em 0; /* 10px转换 */
+            }
+
+            .detail-label, .detail-value {
+                font-size: 1em; /* 12px转换 */
+            }
+        }
+
+        @media (max-width: 280px) {
+            html {
+                font-size: 10px; /* 在最小屏幕设备上进一步减少根字体大小 */
+            }
+
+            .avatar {
+                width: 5em; /* 50px / 10px = 5em */
+                height: 5em; /* 50px / 10px = 5em */
+            }
+
+            .name {
+                font-size: 1.8em; /* 18px / 10px = 1.8em */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="header">
+            <div class="avatars">
+                <div class="avatar-wrapper">
+                    <div class="avatar">
+                        <img src="3.jpg" alt="录取照片" style="width: 100%; height: 100%;">
+                    </div>
+                    <div class="avatar-label">录取照片</div>
+                </div>
+                <div class="avatar-wrapper">
+                    <div class="avatar">
+                        <img src="4.jpg" alt="学历照片" style="width: 100%; height: 100%;">
+                    </div>
+                    <div class="avatar-label">学历照片</div>
+                </div>
+            </div>
+            <div class="info">
+                <div class="name">黎鹏飞</div>
+                <div class="birthday">男&nbsp;&nbsp;&nbsp;&nbsp;2000年02月18日</div>
+            </div>
+        </div>
+
+        <div class="school-info">
+            <div class="school-name-container">
+                <div>
+                    <div class="school-name">四川师范大学</div>
+                    <div class="major-info">地理信息科学&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp; 普通全日制</div>
+                </div>
+                <div class="education-level">本科</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="details">
+        <div class="detail-item">
+            <div class="detail-label">民族</div>
+            <div class="detail-value">汉族</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">证件号码</div>
+            <div class="detail-value">421222200002180012</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">学制</div>
+            <div class="detail-value">4年</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">学历类别</div>
+            <div class="detail-value">普通高等教育</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">分院</div>
+            <div class="detail-value">地理与资源科学学院</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">系所</div>
+            <div class="detail-value"></div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">班级</div>
+            <div class="detail-value">21002201</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">学号</div>
+            <div class="detail-value">2100220110</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">入学日期</div>
+            <div class="detail-value">2022年09月01日</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">学籍状态</div>
+            <div class="detail-value">在籍（注册学籍）</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">预计毕业日期</div>
+            <div class="detail-value">2026年06月30日</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <button class="btn">申请验证报告</button>
+    </div>
+
+    <script>
+        document.querySelector('.btn').addEventListener('click', function() {
+            alert('验证报告申请已提交！');
+        });
+    </script>
+</body>
+</html>
